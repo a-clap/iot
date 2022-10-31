@@ -18,10 +18,11 @@ func main() {
 
 	view := container.NewBorder(nil, nil, nil, nil, content)
 
-	split := container.NewHSplit(navigation(), view)
+	split := container.NewHSplit(navigation(content), view)
 	split.Offset = 0.2
 
 	w.SetContent(split)
+
 	w.Resize(fyne.Size{
 		Width:  display.Width(),
 		Height: display.Height(),
@@ -30,39 +31,48 @@ func main() {
 	w.ShowAndRun()
 }
 
-func navigation() fyne.CanvasObject {
-	guiApp := fyne.CurrentApp()
-	tree := &widget.Tree{
-		ChildUIDs: func(uid string) []string {
-			return display.ChildUIDs(uid)
-		},
-		IsBranch: func(uid string) bool {
-			children := display.ChildUIDs(uid)
+func navigation(c *fyne.Container) fyne.CanvasObject {
 
-			return children != nil && len(children) > 0
+	tree := &widget.Tree{
+		ChildUIDs: func(uid widget.TreeNodeID) []string {
+			if w, err := display.GetWindow(uid); err == nil {
+				return w.ChildUIDs()
+			}
+			return nil
+		},
+		IsBranch: func(uid widget.TreeNodeID) bool {
+			if w, err := display.GetWindow(uid); err == nil {
+				return len(w.ChildUIDs()) > 0
+			}
+			return false
 		},
 		CreateNode: func(branch bool) fyne.CanvasObject {
-			// TODO: What is this?
-			return widget.NewLabel("Collection Widgets")
+			return widget.NewLabel("")
 		},
-		UpdateNode: func(uid string, branch bool, obj fyne.CanvasObject) {
-			//t, ok := gui.Windows[uid]
-			//if !ok {
-			//	fyne.LogError("Missing tutorial panel: "+uid, nil)
-			//	return
-			//}
-			//obj.(*widget.Label).SetText(t.Name())
+		UpdateNode: func(uid widget.TreeNodeID, branch bool, obj fyne.CanvasObject) {
+			if w, err := display.GetWindow(uid); err == nil {
+				obj.(*widget.Label).SetText(w.Title())
+			}
 		},
-		OnSelected: func(uid string) {
+		OnSelected: func(uid widget.TreeNodeID) {
+			if w, err := display.GetWindow(uid); err == nil {
+				c.Objects = []fyne.CanvasObject{w.Selected()}
+				c.Refresh()
+			}
+		},
+		OnUnselected: func(uid widget.TreeNodeID) {
+			if w, err := display.GetWindow(uid); err == nil {
+				w.UnSelected()
+			}
 		},
 	}
 
 	themes := container.NewGridWithColumns(2,
 		widget.NewButton(display.Text(display.Dark), func() {
-			guiApp.Settings().SetTheme(display.DarkTheme())
+			fyne.CurrentApp().Settings().SetTheme(display.DarkTheme())
 		}),
 		widget.NewButton(display.Text(display.Light), func() {
-			guiApp.Settings().SetTheme(display.LightTheme())
+			fyne.CurrentApp().Settings().SetTheme(display.LightTheme())
 		}),
 	)
 

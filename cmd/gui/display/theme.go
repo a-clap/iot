@@ -6,6 +6,14 @@ import (
 	"image/color"
 )
 
+func DarkTheme() fyne.Theme {
+	return newTheme(theme.VariantDark)
+}
+
+func LightTheme() fyne.Theme {
+	return newTheme(theme.VariantLight)
+}
+
 type themeVariant struct {
 	v fyne.ThemeVariant
 	fyne.Theme
