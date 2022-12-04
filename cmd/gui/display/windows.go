@@ -9,6 +9,10 @@ var (
 	ErrNotExist = errors.New("window doesn't exist")
 )
 
+func WelcomeWindow() Window {
+	return mainMenu
+}
+
 func GetWindow(uid string) (Window, error) {
 	w, ok := windows[uid]
 	if !ok {

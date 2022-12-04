@@ -12,19 +12,19 @@ type windowSettings struct {
 
 var _ Window = &windowSettings{}
 
-func (w windowSettings) key() string {
+func (w *windowSettings) key() string {
 	return "windowSettings"
 }
 
-func (w windowSettings) Title() string {
+func (w *windowSettings) Title() string {
 	return Text(SettingsWindow)
 }
 
-func (w windowSettings) ChildUIDs() []string {
+func (w *windowSettings) ChildUIDs() []string {
 	return nil
 }
 
-func (w windowSettings) Selected() fyne.CanvasObject {
+func (w *windowSettings) Selected() fyne.CanvasObject {
 	tabs := container.NewAppTabs(
 		container.NewTabItemWithIcon("tab111111111111111111111111111", theme.MoveDownIcon(), widget.NewLabel("vey long word on safasfasfsa")),
 		container.NewTabItemWithIcon("tab2", theme.MoveUpIcon(), widget.NewLabel("world")),
@@ -33,5 +33,5 @@ func (w windowSettings) Selected() fyne.CanvasObject {
 	return tabs
 }
 
-func (w windowSettings) UnSelected() {
+func (w *windowSettings) UnSelected() {
 }

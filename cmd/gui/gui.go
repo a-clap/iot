@@ -11,13 +11,13 @@ import (
 func main() {
 	guiApp := app.NewWithID("dest.io")
 	guiApp.Settings().SetTheme(display.DarkTheme())
-
 	w := guiApp.NewWindow("app")
 
+	appWindow := display.WelcomeWindow()
 	content := container.NewMax()
+	content.Add(appWindow.Selected())
 
 	view := container.NewBorder(nil, nil, nil, nil, content)
-
 	split := container.NewHSplit(navigation(content), view)
 	split.Offset = 0.2
 
